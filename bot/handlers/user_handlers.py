@@ -1,11 +1,10 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.filters import Command, CommandStart, StateFilter
 from bot.lexicon.lexicon_ru import LEXICON_RU
-from bot.keyboards.keyboards import keyboard
-from llm_agent.llm import get_answer
+from llm_agent.agent import Bibliography
 
 router = Router()
 
@@ -21,13 +20,6 @@ async def process_start_command(message: Message, state: FSMContext):
 
 
 @router.message(StateFilter(FSMGame.search_message))
-async def process_llm_message(message: Message, state: FSMContext):
-    response = get_answer(message.text)
+async def process_llm_message(message: Message):
+    response = Bibliography(message.text).execute_agent()
     await message.answer(text=response)
-
-
-# @router.callback_query(F.data == 'big_button_1_pressed')
-# async def process_big_button_pressed(callback: CallbackQuery):
-#     await callback.message.answer(text='нажамта кнопка')
-
-
