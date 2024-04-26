@@ -1,4 +1,5 @@
 from config_data.config import AU_DATA
+from gigachat.exceptions import ResponseError
 from langchain.agents import AgentExecutor, create_gigachat_functions_agent
 from langchain_community.chat_models.gigachat import GigaChat
 from llm_agent.utils.web_parser import parse_web
@@ -44,7 +45,11 @@ class Bibliography:
             Ответ дай строго в виде: Название статьи : тип -- автор, год написания -- URL : {self.user_query}, (дата обращения: 24.04.2024) — Текст : электронный.
             """
 
-        return self.giga.invoke(prompt_tool).content
+        try:
+            response = self.giga.invoke(prompt_tool).content
+        except ResponseError:
+            response = 'Произошла ошибка, вероятно, отправленный вами источник слишком большой'
+        return response
 
     def _get_answer_from_pdf(self, input_data):
         prompt_tool = f"""
@@ -54,8 +59,11 @@ class Bibliography:
             Думай пошагово.
             Ответ дай строго в виде: Название статьи : тип -- автор, год написания -- URL : {self.user_query}, (дата обращения: 24.04.2024) — Текст : электронный.
             """
-
-        return self.giga.invoke(prompt_tool).content
+        try:
+            response = self.giga.invoke(prompt_tool).content
+        except ResponseError:
+            response = 'Произошла ошибка, вероятно, отправленный вами источник слишком большой'
+        return response
 
     def _get_tools(self):
         """

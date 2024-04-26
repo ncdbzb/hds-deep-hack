@@ -4,7 +4,10 @@ from PyPDF2 import PdfReader
 
 
 def parse_pdf(url: str) -> str:
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except requests.RequestException:
+        return 'Произошла ошибка парсинга'
     file_name = 'pdf_file.pdf'
     if response.status_code == 200:
         with open(file_name, 'wb') as f:

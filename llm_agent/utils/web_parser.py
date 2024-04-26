@@ -3,8 +3,10 @@ import requests
 
 
 def parse_web(url: str) -> str:
-    response = requests.get(url)
-
+    try:
+        response = requests.get(url)
+    except requests.RequestException:
+        return 'Произошла ошибка парсинга'
     body_text = ''
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
